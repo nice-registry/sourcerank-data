@@ -1,0 +1,11 @@
+{
+  "name": "sourcerank-data",
+  "description": "experimental database of cached libraries.io SourceRank data for all the npm packages",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "all-the-package-names": "^1.3440.0",
+    "level": "^2.1.1"
+  }
+}
