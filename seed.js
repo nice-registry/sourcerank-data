@@ -8,5 +8,5 @@ for (i = 0; i < names.length; i++) {
 }
 
 async function saveName (name) {
-  await db.put(name, {})
+  await db.put(name, JSON.stringify({}))
 }
