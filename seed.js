@@ -1,5 +1,11 @@
 const db = require('level')('./db')
-const names = require('all-the-package-names')
+const {chain} = require('lodash')
+const isNumber = require('is-number')
+const names = chain(require('all-the-package-names'))
+  .map(name => name.trim())
+  .filter(name => !isNumber(name))
+  .uniq()
+  .value()
 
 for (i = 0; i < names.length; i++) {
   const name = names[i]

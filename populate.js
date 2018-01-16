@@ -1,27 +1,29 @@
-
 const db = require('level')('./db')
 const fs = require('fs')
 const path = require('path')
 const urlencode = require('urlencode')
+const {gray, yellow} = require('chalk')
+const {sum} = require('lodash')
 
-let extant = 0
-let nonexistent = 0
 db.createKeyStream()
   .on('data', async (name) => {
     const dataFile = path.join(__dirname, '../sourceranks/data', urlencode(name) + '.json')
-    if (fs.existsSync(dataFile)) {
-      await saveRank(name, dataFile)
-      console.log(dataFile, 'exists')
-      extant++
+    let data = {}
+    if (fs.existsSync(dataFile)) { 
+      const scores = require(dataFile)
+      data = Object.assign({}, data, {
+        scores: scores,
+        total: sum(Object.values(scores))
+      })
+      process.stdout.write(gray('x'))
     } else {
-      nonexistent++
-      console.log(dataFile, 'DOES NOT EXIST')
+      data.notFound = true
+      process.stdout.write(yellow('x'))
     }
+
+    data.updatedAt = new Date()
+    await db.put(name, JSON.stringify(data, null, 2))
   })
   .on('end', () => {
-    console.log('done', extant, nonexistent)
+    console.log('done')
   })
-
-async function saveRank (name, dataFile) {
-  db.put(name, JSON.stringify(require(dataFile), null, 2))
-}
